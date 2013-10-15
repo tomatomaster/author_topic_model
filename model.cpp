@@ -507,6 +507,8 @@ int model::save_model_others(string filename) {
 
     double max = -100000000;
     double new_logP = 0.0;
+    int **max_x;
+    int **max_z;
 
     if (twords > 0) {
       // print out top words per topic
@@ -533,7 +535,7 @@ int model::save_model_others(string filename) {
       }
       //debug point 2
       new_logP = logP_zaw();
-      max = save_max_logP(new_logP,  max);
+      max = save_max_logP(new_logP,  max, max_x, max_z);
     
       if (savestep > 0) {
 	if (liter % savestep == 0) {//指定したステップ数まで終わったらモデルを一度保存する
@@ -552,6 +554,8 @@ int model::save_model_others(string filename) {
       for(int j=0; j < ptrndata->docs[i]->length; j++){
 	it = id2word.find(ptrndata->docs[i]->words[j]);
 	fprintf(fout, "[%s %d] ", (it->second).c_str(), z[i][j]);
+	x[i][j] = max_x[i][j];
+	z[i][j] = max_z[i][j];
       }
       fprintf(fout,"\n");
       fprintf(fout,"document number = %d \n",i);
@@ -766,12 +770,13 @@ double model::logP_zaw(){
 }
 
 
-int model::save_max_logP(double logP, double ex_max){
+int model::save_max_logP(double logP, double ex_max, int **max_x, int **max_z){
   
   double max  = 0.0;
   int document_num = ptrndata->M;
-  int ** max_x = new int*[document_num];
-  int ** max_z = new int*[document_num];
+  
+  max_x = new int*[document_num];
+  max_z = new int*[document_num];
 
   if(logP > ex_max){
     max = logP;

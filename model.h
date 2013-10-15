@@ -165,7 +165,7 @@ public:
     //for compute logP
     double LogGamma(double x);
     double logP_zaw();
-    int save_max_logP(double logP, double ex_logP);
+    int save_max_logP(double logP, double ex_logP, int **x, int **z);
 };
 
 #endif
